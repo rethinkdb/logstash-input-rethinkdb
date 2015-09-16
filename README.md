@@ -2,7 +2,7 @@
 
 This is a plugin for [Logstash](https://github.com/elasticsearch/logstash).
 
-**Currently this is BETA software. It includes some limitations that won't make it suitable for use in production until RethinkDB 2.1 is released**
+**Currently this is BETA software. It includes some limitations that won't make it suitable for use in production until RethinkDB 2.2 is released**
 
 This plugin will eventually replace the [RethinkDB river](https://github.com/rethinkdb/elasticsearch-river-rethinkdb) as the preferred method of syncing RethinkDB and ElasticSearch. We're hoping to get early feedback on how useful the plugin is, and what can be improved (beyond the known limitations, see below).
 
