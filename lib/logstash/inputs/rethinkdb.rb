@@ -40,7 +40,7 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
     @db_feeds = {}
     @queue = nil
     @backfill = @backfill && @backfill != 'false'
-    @squash = @squash && @squash != 'true'
+    @squash = @squash && @squash != 'false'
   end
 
   # # Part of the logstash input interface
