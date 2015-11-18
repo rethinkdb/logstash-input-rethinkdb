@@ -19,7 +19,7 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   # Auth key of RethinkDB server (don't provide if nil)
   config :auth_key, :validate => :string, :default => ""
   # Time period to squash changefeeds on. Defaults to no squashing.
-  config :squash, :default => false
+  config :squash, :default => true
   # Which tables to watch for changes
   config :watch_tables, :validate => :array, :default => []
   # Which databases to watch for changes. Tables added or removed from
@@ -39,7 +39,8 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
     # {db => QueryHandle}
     @db_feeds = {}
     @queue = nil
-    @backfill = @backfill && @backfill != "false"
+    @backfill = @backfill && @backfill != 'false'
+    @squash = @squash && @squash != 'true'
   end
 
   # # Part of the logstash input interface
