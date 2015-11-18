@@ -30,9 +30,6 @@ output {stdout {codec => json_lines}}'
 
 This will immediately watch the tables `test.foo` and `db2.baz`, and it will also watch the databases `db1` and `db2` for new or dropped tables and watch or unwatch those tables appropriately. Since `backfill` is `true`, it will automatically send events for the documents that already exist in those tables during initialization.
 
-
-Since `backfill` is `true`, it will automatically watch any tables it finds in `db1` or `db2`, and will send events over logstash for each document already in those tables.
-
 ### Format of the events:
 
 The events are encoded with the "json_lines" codec, which puts compressed json documents one event per line
