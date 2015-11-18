@@ -2,14 +2,11 @@
 
 This is a plugin for [Logstash](https://github.com/elasticsearch/logstash).
 
-**Currently this is BETA software. It includes some limitations that won't make it suitable for use in production until RethinkDB 2.2 is released**
-
-This plugin will eventually replace the [RethinkDB river](https://github.com/rethinkdb/elasticsearch-river-rethinkdb) as the preferred method of syncing RethinkDB and ElasticSearch. We're hoping to get early feedback on how useful the plugin is, and what can be improved (beyond the known limitations, see below).
-
+**Currently this is BETA software. It contains some known limitations (see below)**
 
 ## Using the plugin
 
-You'll need to use this with the Logstash 1.5 release candidate, which you can [download here](https://www.elastic.co/downloads/logstash).
+You'll need to use this with the Logstash 1.5 or higher, which you can [download here](https://www.elastic.co/downloads/logstash).
 
 - Install the plugin from the Logstash home directory
 ```sh
@@ -51,7 +48,8 @@ Fields:
 
 ## Known limitations
 
-There are two big limitations that prevent this plugin from being useful for production:
+There are two limitations that should be known by anyone using this in production systems:
+
 1. Until RethinkDB supports resuming changefeeds, this plugin cannot guarantee that no changes are missed if a connection to the database is dropped. Again, once that functionality is implemented, this plugin will be modified to provide reliable "at least once" semantics for changes (meaning once it reconnects, it can catch back up and send any changes that it missed).
 2. Documents that are deleted in RethinkDB while the LogStash plugin is disconnected will not be synchronized. This is true even if `backfill` is enabled. This limitation is a consequence of LogStash operating on a document-by-document basis.
 
