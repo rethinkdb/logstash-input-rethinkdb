@@ -25,6 +25,11 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   # Which databases to watch for changes. Tables added or removed from
   # these databases will be watched or unwatched accordingly
   config :watch_dbs, :validate => :array, :default => []
+  # Whether to backfill documents from the dbs and tables when
+  # (re)connecting to RethinkDB. This ensures all documents in the
+  # RethinkDB tables will be sent over logstash, but it may cause a
+  # lot of traffic with very large tables and/or unstable connections.
+  config :backfill, :default => true
 
 
   # Part of the logstash input interface
@@ -34,6 +39,7 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
     # {db => QueryHandle}
     @db_feeds = {}
     @queue = nil
+    @backfill = @backfill && @backfill != "false"
   end
 
   # # Part of the logstash input interface
@@ -128,14 +134,18 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
       table('table_status').
       filter {|row| row['status']['all_replicas_ready']}.
       pluck('db', 'name').
-      changes(:squash => @squash, :include_states => true).
+      changes(:include_initial => @backfill,
+              :squash => @squash,
+              :include_states => true).
       em_run(@conn, handler)
   end
 
   def create_table_feed(db, table, handler)
     r.db(db).
       table(table).
-      changes(:squash => @squash, :include_states => true).
+      changes(:include_initial => @backfill,
+              :squash => @squash,
+              :include_states => true).
       em_run(@conn, handler)
   end
 
@@ -166,7 +176,7 @@ class TableHandler < RethinkDB::Handler
     @plugin = plugin
   end
 
-  def on_initial(val)
+  def on_initial_val(val)
     @plugin.send(@db, @table, nil, val)
   end
 
