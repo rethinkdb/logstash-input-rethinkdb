@@ -142,12 +142,16 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   end
 
   def create_table_feed(db, table, handler)
+    options = {
+      :time_format => 'raw',
+      :binary_format => 'raw',
+    }
     r.db(db).
       table(table).
       changes(:include_initial => @backfill,
               :squash => @squash,
               :include_states => true).
-      em_run(@conn, handler)
+      em_run(@conn, options, handler)
   end
 
   def teardown
