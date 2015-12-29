@@ -133,11 +133,16 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   def create_db_feed(db, handler)
     r.db('rethinkdb').
       table('table_status').
-      filter {|row| row['status']['all_replicas_ready']}.
-      pluck('db', 'name').
       changes(:include_initial => @backfill,
               :squash => @squash,
               :include_states => true).
+      # The filter and pluck are after .changes due to bug #5241. When
+      # that's solved they can be moved before .changes and can be
+      # simplified since they won't have to operate over both new_val
+      # and old_val
+      filter{|row| r([row['old_val']['db'], row['new_val']['db']]).contains(db).
+              and(row['status']['all_replicas_ready'])}.
+      pluck({:new_val => ['db', 'name'], :old_val => ['db', 'name']}).
       em_run(@conn, handler)
   end
 
