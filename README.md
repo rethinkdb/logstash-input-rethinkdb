@@ -47,7 +47,7 @@ Fields:
 
 There are two limitations that should be known by anyone using this in production systems:
 
-1. Until RethinkDB supports resuming changefeeds, this plugin cannot guarantee that no changes are missed if a connection to the database is dropped. Again, once that functionality is implemented, this plugin will be modified to provide reliable "at least once" semantics for changes (meaning once it reconnects, it can catch back up and send any changes that it missed).
+1. Until RethinkDB supports [resuming changefeeds](https://github.com/rethinkdb/rethinkdb/issues/3471), this plugin cannot guarantee that no changes are missed if a connection to the database is dropped. Again, once that functionality is implemented, this plugin will be modified to provide reliable "at least once" semantics for changes (meaning once it reconnects, it can catch back up and send any changes that it missed).
 2. Documents that are deleted in RethinkDB while the LogStash plugin is disconnected will not be synchronized. This is true even if `backfill` is enabled. This limitation is a consequence of LogStash operating on a document-by-document basis.
 
 ## License
