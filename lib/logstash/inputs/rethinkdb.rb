@@ -30,6 +30,8 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   # RethinkDB tables will be sent over logstash, but it may cause a
   # lot of traffic with very large tables and/or unstable connections.
   config :backfill, :default => true
+  #ssl support
+  config :ca_certs, :default => nil
 
 
   # Part of the logstash input interface
@@ -46,10 +48,16 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
   # # Part of the logstash input interface
   def run(queue)
     @queue = queue
+    if @ca_certs
+      ssl = { :ca_certs => @ca_certs }
+    else
+      ssl = nil
+    end
     @conn = r.connect(
       :host => @host,
       :port => @port,
       :auth_key => @auth_key,
+      :ssl => ssl
     )
     EM.run do
       @logger.log "Eventmachine loop started"
