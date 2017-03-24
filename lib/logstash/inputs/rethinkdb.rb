@@ -55,14 +55,24 @@ class LogStash::Inputs::RethinkDB < LogStash::Inputs::Base
     else
       ssl = nil
     end
-    @conn = r.connect(
-      :host => @host,
-      :port => @port,
-      :auth_key => @auth_key,
-      :user => @user,
-      :password => @password,
-      :ssl => ssl
-    )
+
+    unless @auth_key == ""
+      @conn = r.connect(
+        :host => @host,
+        :port => @port,
+        :auth_key => @auth_key,
+        :ssl => ssl
+      )
+    else
+      @conn = r.connect(
+        :host => @host,
+        :port => @port,
+        :user => @user,
+        :password => @password,
+        :ssl => ssl
+      )
+    end
+
     EM.run do
       @logger.log "Eventmachine loop started"
       @watch_dbs.uniq.each do |db|
